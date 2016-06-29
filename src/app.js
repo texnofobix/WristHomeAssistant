@@ -53,11 +53,21 @@ var menu = new UI.Menu({
   }]
 });
 
+//from http://stackoverflow.com/questions/881510/sorting-json-by-values
+function sortJSON(data, key, way) {
+    return data.sort(function(a, b) {
+        var x = a[key]; var y = b[key];
+        if (way === '123' ) { return ((x < y) ? -1 : ((x > y) ? 1 : 0)); }
+        if (way === '321') { return ((x > y) ? -1 : ((x < y) ? 1 : 0)); }
+    });
+}
+
 function getstates() {
   ajax(
     { url: baseurl + '/states', type: 'json', headers: baseheaders },
     function(data) {
       console.log('HA States: ' + data);
+      data = sortJSON(data,'last_changed', '321'); // 123 or 321
       //data.forEach(displayItem);
       var arrayLength = data.length;
       var menuIndex = 0;

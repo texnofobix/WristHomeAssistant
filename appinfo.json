@@ -35,7 +35,8 @@
     "shortName": "Wrist H-A",
     "targetPlatforms": [
         "aplite",
-        "basalt"
+        "basalt",
+        "chalk"
     ],
     "uuid": "52d821f3-fde1-404c-8a04-2c1d06bea2fe",
     "versionCode": 1,
