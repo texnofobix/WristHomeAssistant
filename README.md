@@ -1,6 +1,8 @@
 # WristHomeAssistant
 
-A simple view-only application for Pebble Watches to monitor Home Assistant. 
+A simple application for Pebble Watches to monitor Home Assistant, currently read-only. 
+
+Updates automatically every 5 mins.
 
 Screenshot: 
 
@@ -9,4 +11,4 @@ Screenshot:
 Early release: https://apps.getpebble.com/applications/57759f9aba2fe5d0c60005b5 
 
 Tested platform:
--Pebble Time Steel
+- Pebble Time Steel
