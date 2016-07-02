@@ -3,7 +3,7 @@
     "capabilities": [
         "configurable"
     ],
-    "companyName": "Souers Software",
+    "companyName": "texnofobix",
     "longName": "Wrist Home-Assistant",
     "projectType": "pebblejs",
     "resources": {
@@ -40,7 +40,7 @@
     ],
     "uuid": "52d821f3-fde1-404c-8a04-2c1d06bea2fe",
     "versionCode": 1,
-    "versionLabel": "0.1",
+    "versionLabel": "0.2",
     "watchapp": {
         "hiddenApp": false,
         "watchface": false

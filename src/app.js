@@ -3,6 +3,7 @@
  *
  * By Dustin Souers
  */
+console.log('WHA started!');
 
 var confVersion = '0.1.3';
 
@@ -30,6 +31,7 @@ Settings.config(
   }
 );
 
+// Set some variables for quicker access
 var ha_url = Settings.option('haurl');
 var ha_password = Settings.option('pwd');
 
@@ -38,11 +40,13 @@ var baseheaders = {'x-ha-access': ha_password};
 
 console.log('ha_url: ' + baseurl);
 
+// Initial screen
 var main = new UI.Card({
-  title: 'Wrist Home Assistant',
+  title: 'Wrist Home Assistant v0.2.1',
   subtitle: 'Loading ...',
 });
 
+// Set Menu colors
 var menu = new UI.Menu({
   backgroundColor: 'black',
   textColor: 'white',
@@ -53,6 +57,7 @@ var menu = new UI.Menu({
   }]
 });
 
+
 //from http://stackoverflow.com/questions/881510/sorting-json-by-values
 function sortJSON(data, key, way) {
     return data.sort(function(a, b) {
@@ -62,11 +67,18 @@ function sortJSON(data, key, way) {
     });
 }
 
+// gets HA device states
 function getstates() {
+  menu.section(0).title = 'WHA - updating ...';
+  menu.show();
+  main.hide();
+  
   ajax(
     { url: baseurl + '/states', type: 'json', headers: baseheaders },
     function(data) {
       console.log('HA States: ' + data);
+      console.log('WHA: upload title');
+      menu.section(0).title = 'WHA';
       data = sortJSON(data,'last_changed', '321'); // 123 or 321
       //data.forEach(displayItem);
       var arrayLength = data.length;
@@ -80,16 +92,22 @@ function getstates() {
           menuIndex++;
         }
       }
-      menu.show();
+   
     },
     function(error, status, request) {
       console.log('HA States failed: ' + error + ' status: ' + status);
+      menu.section(0).title = 'WHA - failed updating';
+      //main.subtitle('HA State load failed')
+      //menu.hide();
+      //main.show();
     }
   );
 } 
 
+// show main screen
 main.show();
 
+// get API status
 ajax({ url: baseurl + '/', type: 'json', headers: baseheaders },
   function(data) {
     //card.body(data.contents.quote);
@@ -98,8 +116,24 @@ ajax({ url: baseurl + '/', type: 'json', headers: baseheaders },
     main.subtitle(data.message);
     //on success call states?
     getstates();
+    
   },
   function(error, status, request) {
     console.log('HA Status failed: ' + error + ' status: ' + status);
+    main.subtitle('Unable to connect: ' + error + ' status: ' + status);
   }
 );
+
+/*
+Expiremental reload
+*/
+var mins = 1;
+var counter = 0;
+var timerID = setInterval(clock, 60000 * mins);
+
+function clock() {
+  counter = counter +1;
+  //simply.setText({Title:counter},true);
+  console.log('WHA Reload' + counter);
+  getstates();
+}
