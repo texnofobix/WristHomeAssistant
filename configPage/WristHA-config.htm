@@ -1,0 +1,71 @@
+<html>
+<head>
+	<title>Settings</title>
+	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+        <h1>Wrist HomeAssistant Config</h1>	
+	<!-- HEADER -->
+
+	<h4 style="margin-left:25px; padding-bottom:10px">Choose your settings:</h4>
+	
+	<!-- TABLE -->
+	<table>
+		<tr>
+			<td><p style="padding-top:0px; padding-left:25px; vertical-align:middle; display:table-cell;">Enter Home-Assistant URL: </p></td>
+                        <td><input type="url" class="form-control" id="haurl"></td>
+			<td><p style="padding-top:0px; padding-left:25px; vertical-align:middle; display:table-cell;">Enter API password: </p></td>
+                        <td><input type="password" class="form-control" id="pwd"></td>
+                       
+		</tr>
+	</table>
+	
+	<p style="text-align:center;">
+		<button type='button' class="submit btn btn-success" style="width:100px; margin-top:20px;">Submit</button>
+	</p>
+		
+	<!-- FOOTER -->
+	<br>
+	<div stlye="width:200px;">
+		<p style="text-align:center;">Made by Patrick Balestra, <a href="http://www.twitter.com/BalestraPatrick" target="_blank">@BalestraPatrick</a></p>
+	</div>
+	
+	<!-- SCRIPTS -->
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script type="text/javascript">
+		$().ready(function() {
+			window.applicationCache.addEventListener('updateready', onUpdateReady);
+
+			function onUpdateReady() {
+				if(window.applicationCache.status === window.applicationCache.UPDATEREADY) {
+  					window.location.reload();
+  				}
+			}
+			
+			var dictionary;
+			try {
+				
+				dictionary = JSON.parse(localStorage["dictionary"]);
+                                console.log(dictionary);
+                                document.getElementById('haurl').value = dictionary['haurl'];
+                                document.getElementById('pwd').value = dictionary['pwd'];
+			}
+			catch(e) {
+				dictionary = {};
+			}
+
+		    $('.submit').click(function() {
+                        dictionary['haurl'] = document.getElementById('haurl').value;
+                        dictionary['pwd'] = document.getElementById('pwd').value;
+		    	console.log(JSON.stringify(dictionary));
+		    	var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(dictionary));
+                        localStorage["dictionary"] = JSON.stringify(dictionary);
+                        console.log(location);
+			window.location.href = location;
+		    });
+		});
+	</script>
+</body>
+</html>
