@@ -1,11 +1,11 @@
 /**
  * Initial Home Assistant interface for Pebble.
  *
- * By Dustin Souers
+ * By texnofobix (Dustin S.)
  */
 console.log('WHA started!');
 
-var confVersion = '0.1.3';
+var confVersion = '0.2.0';
 
 var UI = require('ui');
 //var Vector2 = require('vector2');
@@ -34,6 +34,7 @@ Settings.config(
 // Set some variables for quicker access
 var ha_url = Settings.option('haurl');
 var ha_password = Settings.option('pwd');
+var ha_refreshTime = Settings.option('refreshTime');
 
 var baseurl = ha_url + '/api';
 var baseheaders = {'x-ha-access': ha_password};
@@ -127,13 +128,15 @@ ajax({ url: baseurl + '/', type: 'json', headers: baseheaders },
 /*
 Expiremental reload
 */
-var mins = 1;
+if (ha_refreshTime < 1 || typeof ha_refreshTime !== "undefined") 
+  {
+    ha_refreshTime = 15;
+  }
 var counter = 0;
-var timerID = setInterval(clock, 60000 * mins);
+var timerID = setInterval(clock, 60000 * ha_refreshTime);
 
 function clock() {
-  counter = counter +1;
-  //simply.setText({Title:counter},true);
+  counter = counter + 1;
   console.log('WHA Reload' + counter);
   getstates();
 }
