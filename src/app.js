@@ -128,7 +128,7 @@ ajax({ url: baseurl + '/', type: 'json', headers: baseheaders },
 /*
 Expiremental reload
 */
-if (ha_refreshTime < 1 || typeof ha_refreshTime !== "undefined") 
+if (ha_refreshTime < 1 || typeof ha_refreshTime == "undefined") 
   {
     ha_refreshTime = 15;
   }
