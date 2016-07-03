@@ -2,7 +2,7 @@
 
 A simple application for Pebble Watches to monitor Home Assistant, currently read-only. 
 
-Updates automatically every 5 mins.
+Updates automatically every 15 mins by default (configurable).
 
 Screenshot: 
 
