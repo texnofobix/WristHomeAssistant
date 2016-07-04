@@ -5,23 +5,28 @@
  */
 console.log('WHA started!');
 
+var appVersion = '0.3.0';
 var confVersion = '0.2.0';
 
 var UI = require('ui');
 //var Vector2 = require('vector2');
 var ajax = require('ajax');
 var Settings = require('settings');
+//var Timeline = require('timeline');
+//var Vibe = require('ui/vibe');
+
+console.log('WHA AccountToken:' + Pebble.getAccountToken());
+console.log('WHA TimelineToken:' + Pebble.getTimelineToken());
 
 // Set a configurable with just the close callback
-Settings.config(
-  { url: 'http://dustin.souers.org/pebble/WristHA-' + confVersion + '.htm' },
+Settings.config({
+    url: 'http://dustin.souers.org/pebble/WristHA-' + confVersion + '.htm'
+  },
   function(e) {
     console.log('closed configurable');
 
     // Show the parsed response
     console.log('returned_settings: ' + JSON.stringify(e.options));
-    //ha_url = e.options.haurl;
-    //ha_password = e.options.pwd;
     Settings.option(e.options);
 
     // Show the raw response if parsing failed
@@ -37,18 +42,20 @@ var ha_password = Settings.option('pwd');
 var ha_refreshTime = Settings.option('refreshTime');
 
 var baseurl = ha_url + '/api';
-var baseheaders = {'x-ha-access': ha_password};
+var baseheaders = {
+  'x-ha-access': ha_password
+};
 
 console.log('ha_url: ' + baseurl);
 
 // Initial screen
 var main = new UI.Card({
-  title: 'Wrist Home Assistant v0.2.1',
+  title: 'Wrist Home Assistant v' + appVersion,
   subtitle: 'Loading ...',
 });
 
 // Set Menu colors
-var menu = new UI.Menu({
+var statusMenu = new UI.Menu({
   backgroundColor: 'black',
   textColor: 'white',
   highlightBackgroundColor: 'white',
@@ -61,77 +68,85 @@ var menu = new UI.Menu({
 
 //from http://stackoverflow.com/questions/881510/sorting-json-by-values
 function sortJSON(data, key, way) {
-    return data.sort(function(a, b) {
-        var x = a[key]; var y = b[key];
-        if (way === '123' ) { return ((x < y) ? -1 : ((x > y) ? 1 : 0)); }
-        if (way === '321') { return ((x > y) ? -1 : ((x < y) ? 1 : 0)); }
-    });
+  return data.sort(function(a, b) {
+    var x = a[key];
+    var y = b[key];
+    if (way === '123') {
+      return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+    }
+    if (way === '321') {
+      return ((x > y) ? -1 : ((x < y) ? 1 : 0));
+    }
+  });
 }
 
 // gets HA device states
 function getstates() {
-  menu.section(0).title = 'WHA - updating ...';
-  menu.show();
+  statusMenu.section(0).title = 'WHA - updating ...';
+  statusMenu.show();
   main.hide();
-  
-  ajax(
-    { url: baseurl + '/states', type: 'json', headers: baseheaders },
+
+  ajax({
+      url: baseurl + '/states',
+      type: 'json',
+      headers: baseheaders
+    },
     function(data) {
       console.log('HA States: ' + data);
       console.log('WHA: upload title');
-      menu.section(0).title = 'WHA';
-      data = sortJSON(data,'last_changed', '321'); // 123 or 321
-      //data.forEach(displayItem);
+      statusMenu.section(0).title = 'WHA';
+      var now = new Date();
+      data = sortJSON(data, 'last_changed', '321'); // 123 or 321
       var arrayLength = data.length;
       var menuIndex = 0;
       for (var i = 0; i < arrayLength; i++) {
-        if (data[i].attributes.hidden)
-        {
+        if (data[i].attributes.hidden) {
           //  
         } else {
-          menu.item(0, menuIndex, { title: data[i].attributes.friendly_name, subtitle: data[i].state });
+          statusMenu.item(0, menuIndex, {
+            title: data[i].attributes.friendly_name,
+            subtitle: data[i].state + ' ' + humanDiff(now, new Date(data[i].last_changed))
+          });
           menuIndex++;
         }
       }
-   
+      //Vibe.vibrate('short');
     },
     function(error, status, request) {
       console.log('HA States failed: ' + error + ' status: ' + status);
-      menu.section(0).title = 'WHA - failed updating';
-      //main.subtitle('HA State load failed')
-      //menu.hide();
-      //main.show();
+      statusMenu.section(0).title = 'WHA - failed updating';
     }
   );
-} 
+}
 
-// show main screen
-main.show();
+function testApi() {
+  // get API status
+  ajax({
+      url: baseurl + '/',
+      type: 'json',
+      headers: baseheaders
+    },
+    function(data) {
+      console.log('HA Status: ' + data);
+      main.subtitle(data.message);
+      //on success call states?
+      getstates();
 
-// get API status
-ajax({ url: baseurl + '/', type: 'json', headers: baseheaders },
-  function(data) {
-    //card.body(data.contents.quote);
-    //.title(data.contents.author);
-    console.log('HA Status: ' + data);
-    main.subtitle(data.message);
-    //on success call states?
-    getstates();
-    
-  },
-  function(error, status, request) {
-    console.log('HA Status failed: ' + error + ' status: ' + status);
-    main.subtitle('Unable to connect: ' + error + ' status: ' + status);
-  }
-);
+    },
+    function(error, status, request) {
+      console.log('HA Status failed: ' + error + ' status: ' + status);
+      main.subtitle('Error!');
+      main.body(error + ' status: ' + status);
+    }
+  );
+}
 
 /*
 Expiremental reload
 */
-if (ha_refreshTime < 1 || typeof ha_refreshTime == "undefined") 
-  {
-    ha_refreshTime = 15;
-  }
+if (ha_refreshTime < 1 || typeof ha_refreshTime == "undefined") {
+  ha_refreshTime = 15;
+}
 var counter = 0;
 var timerID = setInterval(clock, 60000 * ha_refreshTime);
 
@@ -140,3 +155,39 @@ function clock() {
   console.log('WHA Reload' + counter);
   getstates();
 }
+
+// Add an action for SELECT
+statusMenu.on('select', function(e) {
+  console.log('Item number ' + e.itemIndex + ' was short pressed!');
+});
+
+// Add an action for LONGSELECT
+statusMenu.on('longSelect', function(e) {
+  console.log('Item number ' + e.itemIndex + ' was long pressed!');
+});
+
+function humanDiff(newestDate, oldestDate) {
+  var prettyDate = {
+    diffDate: newestDate - oldestDate,
+    diffUnit: "ms"
+  };
+
+  function reduceNumbers(inPrettyDate, interval, unit) {
+    if (inPrettyDate.diffDate > interval) {
+      inPrettyDate.diffDate = inPrettyDate.diffDate / interval;
+      inPrettyDate.diffUnit = unit;
+    }
+    return inPrettyDate;
+  }
+
+  prettyDate = reduceNumbers(prettyDate, 1000, 's');
+  prettyDate = reduceNumbers(prettyDate, 60, 'm');
+  prettyDate = reduceNumbers(prettyDate, 60, 'h');
+  prettyDate = reduceNumbers(prettyDate, 24, 'd');
+  return '> ' + Math.round(prettyDate.diffDate, 0) + ' ' + prettyDate.diffUnit;
+}
+
+
+// show main screen
+main.show();
+testApi();
