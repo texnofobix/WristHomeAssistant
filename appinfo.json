@@ -34,13 +34,11 @@
     "sdkVersion": "3",
     "shortName": "Wrist H-A",
     "targetPlatforms": [
-        "aplite",
-        "basalt",
-        "chalk"
+        "basalt"
     ],
     "uuid": "52d821f3-fde1-404c-8a04-2c1d06bea2fe",
     "versionCode": 1,
-    "versionLabel": "0.2",
+    "versionLabel": "0.4",
     "watchapp": {
         "hiddenApp": false,
         "watchface": false

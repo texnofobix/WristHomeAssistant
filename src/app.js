@@ -5,7 +5,7 @@
  */
 console.log('WHA started!');
 
-var appVersion = '0.3.0';
+var appVersion = '0.3.1';
 var confVersion = '0.2.0';
 
 var UI = require('ui');
@@ -45,6 +45,8 @@ var baseurl = ha_url + '/api';
 var baseheaders = {
   'x-ha-access': ha_password
 };
+
+var device_status;
 
 console.log('ha_url: ' + baseurl);
 
@@ -97,6 +99,7 @@ function getstates() {
       statusMenu.section(0).title = 'WHA';
       var now = new Date();
       data = sortJSON(data, 'last_changed', '321'); // 123 or 321
+      device_status = data;
       var arrayLength = data.length;
       var menuIndex = 0;
       for (var i = 0; i < arrayLength; i++) {
@@ -159,6 +162,13 @@ function clock() {
 // Add an action for SELECT
 statusMenu.on('select', function(e) {
   console.log('Item number ' + e.itemIndex + ' was short pressed!');
+  var friendlyName = device_status[e.itemIndex].attributes.friendly_name;
+  console.log('Friendly: ' + friendlyName);
+  //var thisDevice = device_status.find(x=> x.attributes.friendly_name == friendlyName);
+  var thisDevice = device_status.filter(function(v) { return v.attributes.friendly_name == friendlyName; })[0];
+  console.log('thisDevice: ' + JSON.stringify(thisDevice));
+  //POST /api/services/<domain>/<service>
+  //get available servcies /api/services 
 });
 
 // Add an action for LONGSELECT
