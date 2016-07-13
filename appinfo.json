@@ -10,7 +10,6 @@
         "media": [
             {
                 "file": "images/menu_icon.png",
-                "menuIcon": true,
                 "name": "IMAGE_MENU_ICON",
                 "type": "bitmap"
             },
@@ -28,13 +27,21 @@
                 "file": "fonts/UbuntuMono-Regular.ttf",
                 "name": "MONO_FONT_14",
                 "type": "font"
+            },
+            {
+                "file": "images/WHA_color",
+                "menuIcon": true,
+                "name": "IMAGES_WHA_COLOR",
+                "type": "bitmap"
             }
         ]
     },
     "sdkVersion": "3",
     "shortName": "Wrist H-A",
     "targetPlatforms": [
-        "basalt"
+        "aplite",
+        "basalt",
+        "chalk"
     ],
     "uuid": "52d821f3-fde1-404c-8a04-2c1d06bea2fe",
     "versionCode": 1,

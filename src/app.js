@@ -5,7 +5,7 @@
  */
 console.log('WHA started!');
 
-var appVersion = '0.3.1';
+var appVersion = '0.4.3';
 var confVersion = '0.2.0';
 
 var UI = require('ui');
@@ -66,7 +66,6 @@ var statusMenu = new UI.Menu({
     title: 'WHA'
   }]
 });
-
 
 //from http://stackoverflow.com/questions/881510/sorting-json-by-values
 function sortJSON(data, key, way) {
@@ -161,14 +160,66 @@ function clock() {
 
 // Add an action for SELECT
 statusMenu.on('select', function(e) {
+  // Set Menu colors
+  var statusObjectMenu = new UI.Menu({
+    backgroundColor: 'white',
+    textColor: 'black',
+    highlightBackgroundColor: 'black',
+    highlightTextColor: 'white',
+    sections: [
+      {
+        title: 'Attributes'
+      },
+      {
+        title: 'Events'
+      }
+    ]
+  });
+  statusObjectMenu.hide();
   console.log('Item number ' + e.itemIndex + ' was short pressed!');
-  var friendlyName = device_status[e.itemIndex].attributes.friendly_name;
-  console.log('Friendly: ' + friendlyName);
+  console.log('Title: ' + JSON.stringify(statusMenu.state.sections[0].items[e.itemIndex].title));
+  var friendlyName = statusMenu.state.sections[0].items[e.itemIndex].title;
+  //console.log('Friendly: ' + friendlyName);
   //var thisDevice = device_status.find(x=> x.attributes.friendly_name == friendlyName);
   var thisDevice = device_status.filter(function(v) { return v.attributes.friendly_name == friendlyName; })[0];
   console.log('thisDevice: ' + JSON.stringify(thisDevice));
+  
+  //Object.getOwnPropertyNames(thisDevice);
+  //Object.getOwnPropertyNames(thisDevice.attributes);
+  var arr = Object.getOwnPropertyNames(thisDevice.attributes);
+  //var arr = Object.getOwnPropertyNames(device_status.attributes);
+  for (var i = 0, len = arr.length; i < len; i++) {
+    //arr[i];
+    //thisDevice.attributes[Object.getOwnPropertyNames(thisDevice.attributes)[i]];
+    console.log(arr[i] + ' ' + thisDevice.attributes[arr[i]]);
+    statusObjectMenu.item(0, i, {
+            title: arr[i],
+            subtitle: thisDevice.attributes[arr[i]]
+    });
+  }
+  statusObjectMenu.item(0, i, {
+            title: 'Last Changed',
+            subtitle: thisDevice.last_changed
+    });
+  i++; statusObjectMenu.item(0, i, {
+            title: 'Last Updated',
+            subtitle: thisDevice.last_updated
+    });
+  i++; statusObjectMenu.item(0, i, {
+            title: 'State',
+            subtitle: thisDevice.state
+    });
   //POST /api/services/<domain>/<service>
   //get available servcies /api/services 
+  
+  //Object.getOwnPropertyNames(thisDevice);
+  
+  /*statusObjectMenu.item(0, 0, { //menuIndex
+            title: 'test',
+            subtitle: 'test2'
+          });*/
+  statusObjectMenu.show();
+  
 });
 
 // Add an action for LONGSELECT
