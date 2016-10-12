@@ -29,9 +29,9 @@
                 "type": "font"
             },
             {
-                "file": "images/WHA_color",
+                "file": "images/WHA.png",
                 "menuIcon": true,
-                "name": "IMAGES_WHA_COLOR",
+                "name": "IMAGES_WHA_PNG",
                 "type": "bitmap"
             }
         ]
@@ -45,7 +45,7 @@
     ],
     "uuid": "52d821f3-fde1-404c-8a04-2c1d06bea2fe",
     "versionCode": 1,
-    "versionLabel": "0.4",
+    "versionLabel": "0.6",
     "watchapp": {
         "hiddenApp": false,
         "watchface": false

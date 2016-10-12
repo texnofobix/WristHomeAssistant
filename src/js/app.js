@@ -5,7 +5,7 @@
  */
 console.log('WHA started!');
 
-var appVersion = '0.4.3';
+var appVersion = '0.6.3';
 var confVersion = '0.2.0';
 
 var UI = require('ui');
@@ -15,8 +15,9 @@ var Settings = require('settings');
 //var Timeline = require('timeline');
 //var Vibe = require('ui/vibe');
 
+console.log('WHA version ' + appVersion);
 console.log('WHA AccountToken:' + Pebble.getAccountToken());
-console.log('WHA TimelineToken:' + Pebble.getTimelineToken());
+//console.log('WHA TimelineToken:' + Pebble.getTimelineToken());
 
 // Set a configurable with just the close callback
 Settings.config({
@@ -43,10 +44,13 @@ var ha_refreshTime = Settings.option('refreshTime');
 
 var baseurl = ha_url + '/api';
 var baseheaders = {
-  'x-ha-access': ha_password
+  'x-ha-access': ha_password,
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
 };
 
 var device_status;
+//var events;
 
 console.log('ha_url: ' + baseurl);
 
@@ -136,7 +140,7 @@ function testApi() {
 
     },
     function(error, status, request) {
-      console.log('HA Status failed: ' + error + ' status: ' + status);
+      console.log('HA Status failed: ' + error + ' status: ' + status + 'at' + baseurl + '/');
       main.subtitle('Error!');
       main.body(error + ' status: ' + status);
     }
@@ -171,7 +175,7 @@ statusMenu.on('select', function(e) {
         title: 'Attributes'
       },
       {
-        title: 'Events'
+        title: 'Services'
       }
     ]
   });
@@ -209,10 +213,28 @@ statusMenu.on('select', function(e) {
             title: 'State',
             subtitle: thisDevice.state
     });
+  
+  getServices();
   //POST /api/services/<domain>/<service>
   //get available servcies /api/services 
   
   //Object.getOwnPropertyNames(thisDevice);
+  
+  //thisDevice: {"attributes":{"friendly_name":"Family Room","icon":"mdi:lightbulb"},"entity_id":"switch.family_room","last_changed":"2016-10-12T02:03:26.849071+00:00","last_updated":"2016-10-12T02:03:26.849071+00:00","state":"off"}
+  console.log("This Device entity_id: " + thisDevice.entity_id);
+  var device = thisDevice.entity_id.split('.');
+  var service = device[0];
+  
+  if (service == "switch" || service == "light")
+    {
+      statusObjectMenu.item(1, 0, { //menuIndex
+            title: 'turn_on'
+          });
+      statusObjectMenu.item(1, 1, { //menuIndex
+            title: 'turn_off'
+          });
+    }
+  
   
   /*statusObjectMenu.item(0, 0, { //menuIndex
             title: 'test',
@@ -220,7 +242,32 @@ statusMenu.on('select', function(e) {
           });*/
   statusObjectMenu.show();
   
+  
+  statusObjectMenu.on('select', function(e) {
+    console.log("Request URL will be: " + baseurl + '/services/'+ service +'/' + statusObjectMenu.state.sections[1].items[e.itemIndex].title);
+    var requestData = {"entity_id": thisDevice.entity_id};
+    console.log("Request Data: " + JSON.stringify(requestData));
+    ajax(
+      {
+      url: baseurl + '/services/'+ service +'/' + statusObjectMenu.state.sections[1].items[e.itemIndex].title,
+      method: 'post',
+      headers: baseheaders,
+      type: 'json',
+      data: requestData
+      },
+      function(data) {
+      // Success!
+      console.log(JSON.stringify(data));
+      },
+      function(error) {
+      // Failure!
+      console.log('no response');
+      }
+      );
+  });
 });
+
+
 
 // Add an action for LONGSELECT
 statusMenu.on('longSelect', function(e) {
@@ -248,7 +295,31 @@ function humanDiff(newestDate, oldestDate) {
   return '> ' + Math.round(prettyDate.diffDate, 0) + ' ' + prettyDate.diffUnit;
 }
 
+function getServices(){
+  // get API events
+  ajax({
+      url: baseurl + '/services',
+      type: 'json',
+      headers: baseheaders
+    },
+    function(data) {
+      console.log('HA Services: ' + data);
+      main.subtitle(data.message);
+      //on success call states?
+      //getstates();
+
+    },
+    function(error, status, request) {
+      console.log('HA Services failed: ' + error + ' status: ' + status);
+      main.subtitle('Error!');
+      main.body(error + ' status: ' + status);
+    }
+  );
+}
+
+
 
 // show main screen
 main.show();
+//getEvents();
 testApi();
