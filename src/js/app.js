@@ -44,7 +44,7 @@ var ha_refreshTime = Settings.option('refreshTime');
 
 var baseurl = ha_url + '/api';
 var baseheaders = {
-  'x-ha-access': ha_password,
+  'Authorization': 'Bearer ' + ha_password,
   'Content-Type': 'application/json',
   'Accept': 'application/json'
 };
