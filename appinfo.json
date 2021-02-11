@@ -1,53 +1,49 @@
 {
-    "appKeys": {},
-    "capabilities": [
-        "configurable"
-    ],
-    "companyName": "texnofobix",
-    "longName": "Wrist Home-Assistant",
-    "projectType": "pebblejs",
-    "resources": {
-        "media": [
-            {
-                "file": "images/menu_icon.png",
-                "name": "IMAGE_MENU_ICON",
-                "type": "bitmap"
-            },
-            {
-                "file": "images/logo_splash.png",
-                "name": "IMAGE_LOGO_SPLASH",
-                "type": "bitmap"
-            },
-            {
-                "file": "images/tile_splash.png",
-                "name": "IMAGE_TILE_SPLASH",
-                "type": "bitmap"
-            },
-            {
-                "file": "fonts/UbuntuMono-Regular.ttf",
-                "name": "MONO_FONT_14",
-                "type": "font"
-            },
-            {
-                "file": "images/WHA.png",
-                "menuIcon": true,
-                "name": "IMAGES_WHA_PNG",
-                "type": "bitmap"
-            }
-        ]
-    },
-    "sdkVersion": "3",
-    "shortName": "Wrist H-A",
-    "targetPlatforms": [
-        "aplite",
-        "basalt",
-        "chalk"
-    ],
-    "uuid": "52d821f3-fde1-404c-8a04-2c1d06bea2fe",
-    "versionCode": 1,
-    "versionLabel": "0.6",
-    "watchapp": {
-        "hiddenApp": false,
-        "watchface": false
-    }
+  "appKeys": {},
+  "capabilities": [
+    "configurable"
+  ],
+  "companyName": "texnofobix",
+  "longName": "Wrist Home-Assistant",
+  "resources": {
+    "media": [
+      {
+        "file": "images/WHA.png",
+        "menuIcon": true,
+        "name": "IMAGE_MENU_ICON",
+        "type": "bitmap"
+      },
+      {
+        "file": "images/logo_splash.png",
+        "name": "IMAGE_LOGO_SPLASH",
+        "type": "bitmap"
+      },
+      {
+        "file": "images/tile_splash.png",
+        "name": "IMAGE_TILE_SPLASH",
+        "type": "bitmap"
+      },
+      {
+        "file": "fonts/UbuntuMono-Regular.ttf",
+        "name": "MONO_FONT_14",
+        "type": "font"
+      }
+    ]
+  },
+  "sdkVersion": "3",
+  "shortName": "Wrist H-A",
+  "targetPlatforms": [
+    "aplite",
+    "basalt",
+    "chalk",
+    "diorite",
+    "emery"
+  ],
+  "uuid": "52d821f3-fde1-404c-8a04-2c1d06bea2fe",
+  "versionCode": 1,
+  "versionLabel": "0.7",
+  "watchapp": {
+    "hiddenApp": false,
+    "watchface": false
+  }
 }
